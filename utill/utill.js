@@ -21,14 +21,18 @@ const isAuth = (req, res, next) => {
 		const onlyToken = token.slice(7, token.length); //"Bearer dsjbgfiosdhgibiwego"
 		jwt.verify(onlyToken, config.JWT_SECRET, (err, decode) => {
 			if (err) {
-				return res.status(401).json({ message: 'Invalid Token' });
+				return res
+					.status(401)
+					.json({ message: 'Invalid Token', error: 'Unauthorized' });
 			}
 			req.user = decode;
 			next();
 			return;
 		});
 	} else {
-		return res.status(401).json({ message: 'Token is not supplied' });
+		return res
+			.status(401)
+			.json({ message: 'Token is not supplied', error: 'Unauthorized' });
 	}
 };
 

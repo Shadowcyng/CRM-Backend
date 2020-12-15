@@ -9,7 +9,7 @@ router.post(
 	isAuth,
 	expressAsyncHandle(async (req, res) => {
 		const profile = new Profile({
-			userid: req.body.userid,
+			userid: req.user._id,
 			name: req.body.name,
 			gender: req.body.gender,
 			image: req.body.image,
@@ -40,9 +40,13 @@ router.get(
 	isAuth,
 	expressAsyncHandle(async (req, res) => {
 		var profileId = req.params.id;
+
 		try {
 			const profile = await Profile.findById(profileId);
 			if (profile) {
+				if (profile.userid != req.user.userid) {
+					return res.status(401).json({ error: 'Unauthorized' });
+				}
 				return res.status(200).json(profile);
 			} else {
 				return res.status(404).json({ error: 'Profile Not found' });
@@ -61,6 +65,9 @@ router.put(
 		const profile = await Profile.findById(profileId);
 		try {
 			if (profile) {
+				if (profile.userid != req.user.userid) {
+					return res.status(401).json({ error: 'Unauthorized' });
+				}
 				profile.id = profile.id;
 				profile.userid = profile.userid;
 				profile.name = req.body.name ? req.body.name : profile.name;

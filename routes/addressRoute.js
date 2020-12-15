@@ -2,10 +2,11 @@ const express = require('express')
 const Address = require('../model/addressModel');
 const router = express.Router();
 const expressAsyncHandle = require('express-async-handler');
+const { isAuth } = require('../utill/utill');
 
-router.post('/', expressAsyncHandle(async(req, res)=>{
+router.post('/', isAuth, expressAsyncHandle(async(req, res)=>{
     const address = new Address( {
-        userid : req.body.userid,
+        userid : req.user._id,
         addressLine1 : req.body.addressLine1,
          addressLine2 : req.body.addressLine2,
          city :req.body.city,
@@ -31,7 +32,7 @@ router.post('/', expressAsyncHandle(async(req, res)=>{
 }))
 
 
-router.get('/:id', expressAsyncHandle(async(req,res)=>{
+router.get('/:id',isAuth, expressAsyncHandle(async(req,res)=>{
     var addressId = req.params.id;
     try{
         const address = await Address.findById(addressId);
@@ -45,7 +46,7 @@ router.get('/:id', expressAsyncHandle(async(req,res)=>{
     }
 }))
 
-router.put('/:id', expressAsyncHandle(async(req,res)=>{
+router.put('/:id', isAuth, expressAsyncHandle(async(req,res)=>{
     var addressId = req.params.id;
     const address = await Address.findById(addressId);
     try{
